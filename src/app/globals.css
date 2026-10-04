@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+/* Khai báo font để dùng class `font-sans` và `font-display` */
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui;
+  --font-display: var(--font-inter), ui-sans-serif, system-ui;
+}
+
+@utility font-display {
+  font-family: var(--font-display);
+  font-weight: 700; /* Số 700 tương đương với class font-bold */
+}
+
+body {
+  @apply bg-slate-50 text-slate-800 antialiased;
+}
+
+/* Animation fade-in tương đương class .fi trong HTML */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: none; }
+}
+.animate-fade-in { animation: fade-in 0.25s ease-out; }
