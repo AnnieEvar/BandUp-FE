@@ -14,10 +14,8 @@ export default function AvatarMenu() {
   const [open, setOpen] = useState(false);
   const ref = useClickOutside<HTMLDivElement>(() => setOpen(false));
 
-  // Tên hiển thị: ưu tiên họ tên đăng ký, không có thì lấy phần đầu email
-  const meta = user?.user_metadata ?? {};
-  const fullName = [meta.first_name, meta.last_name].filter(Boolean).join(" ") || user?.email?.split("@")[0] || "User";
-  const initials = fullName.split(" ").map((w: string) => w[0]).join("").slice(0, 2).toUpperCase();
+  if (!user) return null;
+  const initials = user.fullName.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
 
   async function handleSignOut() {
     await signOut();
@@ -35,8 +33,8 @@ export default function AvatarMenu() {
       {open && (
         <div className="absolute right-0 top-full z-50 mt-2 w-64 max-w-[calc(100vw-1.5rem)] rounded-2xl border border-slate-200 bg-white p-2 shadow-lg">
           <div className="mb-1 border-b border-slate-100 px-3 py-2">
-            <p className="text-sm font-semibold">{fullName}</p>
-            <p className="truncate text-xs text-slate-500">{user?.email}</p>
+            <p className="text-sm font-semibold">{user.fullName}</p>
+            <p className="truncate text-xs text-slate-500">{user.email}</p>
           </div>
           {AVATAR_NAV.map(({ href, label, icon: Icon }) => (
             <Link key={href} href={href} onClick={() => setOpen(false)}

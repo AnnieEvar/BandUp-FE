@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
+import { useAuth } from "../hooks/useAuth";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
+import { Lock, Mail } from "lucide-react";
 import {
   authFormClassName,
   authLinkClassName,
@@ -12,52 +14,41 @@ import {
 } from "./auth-form.styles";
 
 export default function RegisterForm() {
+  const router = useRouter();
+  const { signUp } = useAuth();
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
     setError("");
+    const f = new FormData(e.currentTarget);
+    const password = String(f.get("password"));
+    if (password !== String(f.get("confirmPassword"))) return setError("Passwords do not match.");
 
-    const formData = new FormData(event.currentTarget);
-    const password = String(formData.get("password"));
-    const confirmPassword = String(formData.get("confirmPassword"));
-
-    if (password !== confirmPassword) {
-      setError("Passwords do not match.");
-      return;
-    }
     setLoading(true);
-
-    const { error: signUpError } = await createClient().auth.signUp({
-      email: String(formData.get("email")),
-      password,
-      options: {
-        data: {
-          first_name: formData.get("first"),
-          last_name: formData.get("last"),
-        },
-      },
-    });
-
-    setLoading(false);
-
-    if (signUpError) {
-      setError(signUpError.message);
-      return;
+    try {
+      const { needsEmailConfirm } = await signUp({
+        email: String(f.get("email")), password,
+        firstName: String(f.get("first")), lastName: String(f.get("last")),
+      });
+      if (needsEmailConfirm) setDone(true);   // Supabase: chờ xác nhận email
+      else router.replace("/student");        // mock: vào thẳng dashboard
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong.");
+    } finally {
+      setLoading(false);
     }
-
-    setDone(true);
   }
 
   if (done) {
     return (
-      <div className="text-center text-[#1E293B] [font-family:Inter,sans-serif]">
-        <h1 className="text-2xl font-semibold tracking-tight">
+      <div className="text-center">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
           Check your email
         </h1>
-        <p className="mt-2 text-sm leading-6 text-slate-500">
+        <p className="mt-2 text-sm leading-6 text-slate-600">
           We&apos;ve sent a confirmation link to your inbox.
         </p>
         <Link
@@ -71,13 +62,13 @@ export default function RegisterForm() {
   }
 
   return (
-    <div className="text-[#1E293B] [font-family:Inter,sans-serif]">
-      <h1 className="mb-2 text-2xl font-semibold tracking-tight">
-        Create an account
+    <>
+      <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+        Join as a student
       </h1>
 
-      <p className="mb-6 text-sm text-slate-500">
-        Start learning with your student account.
+      <p className="mb-6 text-sm text-slate-600">
+        Create your free learner account in under a minute.
       </p>
 
       <form onSubmit={handleSubmit} className={authFormClassName}>
@@ -89,6 +80,7 @@ export default function RegisterForm() {
         <Input
           name="email"
           type="email"
+          icon={<Mail className="h-4 w-4" />}
           label="Email Address"
           placeholder="you@example.com"
           required
@@ -106,6 +98,7 @@ export default function RegisterForm() {
         <Input
           name="confirmPassword"
           type="password"
+          icon={<Lock className="h-4 w-4" />}
           label="Confirm Password"
           placeholder="Re-enter your password"
           minLength={8}
@@ -115,7 +108,7 @@ export default function RegisterForm() {
         {error && (
           <p
             role="alert"
-            className="rounded-lg bg-red-50 px-3 py-2.5 text-xs leading-5 text-red-600"
+            className="rounded-lg bg-red-50 px-3 py-2.5 text-sm text-red-700"
           >
             {error}
           </p>
@@ -126,16 +119,16 @@ export default function RegisterForm() {
           loading={loading}
           className={authPrimaryButtonClassName}
         >
-          Create account
+          Create my account
         </Button>
       </form>
 
-      <p className="mt-6 border-t border-slate-100 pt-5 text-center text-xs leading-5 text-slate-500">
+      <p className="mt-6 border-t border-slate-100 pt-5 text-center text-sm leading-5 text-slate-600">
         Already have an account?{" "}
         <Link href="/login" className={authLinkClassName}>
           Sign in
         </Link>
       </p>
-    </div>
+    </>
   );
 }

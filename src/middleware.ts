@@ -3,6 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { AUTH_PAGES, ROLE_HOME, type Role } from "@/lib/auth/roles";
 
 export async function middleware(request: NextRequest) {
+  if (process.env.NEXT_PUBLIC_USE_MOCK === "true") return NextResponse.next();
   let response = NextResponse.next({ request });
 
   // Tạo client có khả năng làm mới cookie session

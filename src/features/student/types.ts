@@ -1,7 +1,8 @@
 export interface StudyTask {
   id: string;
   title: string;
-  subject: "Reading" | "Writing" | "Listening" | "Speaking";
+  subject: "Flashcards" | "Reading" | "Writing" | "Listening" | "Speaking";
+  minutes: number;
   href: string;
 }
 

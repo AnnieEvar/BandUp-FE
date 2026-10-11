@@ -3,10 +3,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
-import { ROLE_HOME, type Role } from "@/lib/auth/roles";
+import { ROLE_HOME } from "@/lib/auth/roles";
+import { useAuth } from "../hooks/useAuth";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
+import { Lock, Mail } from "lucide-react";
 import {
   authFormClassName,
   authLinkClassName,
@@ -15,6 +16,7 @@ import {
 
 export default function LoginForm() {
   const router = useRouter();
+  const { signIn } = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -22,44 +24,43 @@ export default function LoginForm() {
     e.preventDefault();
     setError("");
     setLoading(true);
-
     const form = new FormData(e.currentTarget);
-    const supabase = createClient();
-
-    // Đăng nhập bằng email + mật khẩu
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: String(form.get("email")),
-      password: String(form.get("password")),
-    });
-
-    if (error) {
-      setError("Incorrect email or password.");
+    try {
+      const user = await signIn(
+        String(form.get("email")),
+        String(form.get("password")),
+      );
+      router.replace(ROLE_HOME[user.role]);
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong.");
       setLoading(false);
-      return;
     }
-
-    // Chuyển đến trang chủ đúng role, refresh để middleware nhận cookie mới
-    const role = ((data.user.app_metadata?.role as Role) ?? "student") as Role;
-    router.replace(ROLE_HOME[role]);
-    router.refresh();
   }
 
   return (
     <>
-      <h1 className="mb-6 font-display text-3xl">Welcome back</h1>
+      <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+        Welcome back
+      </h1>
+      <p className="mb-6 mt-1 text-sm text-slate-600">
+        Log in to continue your journey.
+      </p>
       <form onSubmit={handleSubmit} className={authFormClassName}>
         <Input
           name="email"
           type="email"
-          label="Email Address"
+          label="Email address"
           placeholder="you@example.com"
+          icon={<Mail className="h-4 w-4" />}
           required
         />
         <Input
           name="password"
           type="password"
           label="Password"
-          placeholder="••••••••"
+          placeholder="Enter your password"
+          icon={<Lock className="h-4 w-4" />}
           required
         />
         <div className="text-right">
@@ -68,7 +69,10 @@ export default function LoginForm() {
           </Link>
         </div>
         {error && (
-          <p className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
+          <p
+            role="alert"
+            className="rounded-lg bg-red-50 p-3 text-sm text-red-700"
+          >
             {error}
           </p>
         )}
@@ -77,15 +81,22 @@ export default function LoginForm() {
           loading={loading}
           className={authPrimaryButtonClassName}
         >
-          Sign In
+          Log In
         </Button>
       </form>
-      <p className="mt-6 border-t border-slate-100 pt-5 text-center text-xs leading-5 text-slate-500">
-        Don't have an account?{" "}
+      <p className="mt-6 border-t border-slate-100 pt-5 text-center text-sm text-slate-600">
+        New to BandUp?{" "}
         <Link href="/register" className={authLinkClassName}>
-          Sign up
+          Create a free account
         </Link>
       </p>
+
+      {process.env.NEXT_PUBLIC_USE_MOCK === "true" && (
+        <p className="mt-4 rounded-lg bg-blue-50 p-3 text-xs text-blue-900">
+          Demo: <b>student@bandup.test</b>, <b>volunteer@bandup.test</b> or{" "}
+          <b>admin@bandup.test</b> · password <b>12345678</b>
+        </p>
+      )}
     </>
   );
 }

@@ -13,16 +13,16 @@ export default function StudyPlanCard({ highlightDay }: { highlightDay: number }
   return (
     <section>
       <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-xl font-bold">View Plan</h2>
-        <Link href="/student/plan" className="text-sm text-blue-600 hover:underline">Open</Link>
+        <h2 className="text-base font-semibold text-slate-900">Study plan</h2>
+        <Link href="/student/plan" className="text-sm font-medium text-blue-700 hover:underline">Open</Link>
       </div>
       <Card className="p-3">
-        <div className="mb-2 grid grid-cols-7 text-center text-[10px] font-bold text-slate-500">
+        <div className="mb-2 grid grid-cols-7 text-center text-[10px] font-bold text-slate-600">
           {["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"].map((d) => <div key={d}>{d}</div>)}
         </div>
         <div className="grid grid-cols-7 gap-1 text-center text-xs">
           {cells.map((d, i) => (
-            <div key={i} className={cn("rounded-lg py-2", d === highlightDay ? "bg-blue-600 font-bold text-white" : d ? "hover:bg-slate-100" : "")}>
+            <div key={i} className={cn("rounded-lg py-1.5", d === highlightDay ? "bg-blue-600 font-bold text-white" : d ? "hover:bg-slate-100" : "")}>
               {d}
             </div>
           ))}
