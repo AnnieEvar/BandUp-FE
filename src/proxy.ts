@@ -6,7 +6,7 @@ const PUBLIC_PREFIXES = [
   "/student/dictionary", "/student/samples",
 ];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   if (process.env.NEXT_PUBLIC_USE_MOCK === "true") return NextResponse.next();
   let response = NextResponse.next({ request });
 

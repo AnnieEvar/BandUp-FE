@@ -44,7 +44,7 @@ export default function LoginForm() {
         Welcome back
       </h1>
       <p className="mb-6 mt-1 text-sm text-slate-600">
-        Log in to continue your journey.
+        Log in to continue your English journey.
       </p>
       <form onSubmit={handleSubmit} className={authFormClassName}>
         <Input
@@ -53,6 +53,7 @@ export default function LoginForm() {
           label="Email address"
           placeholder="you@example.com"
           icon={<Mail className="h-4 w-4" />}
+          autoComplete="email"
           required
         />
         <Input
@@ -61,10 +62,11 @@ export default function LoginForm() {
           label="Password"
           placeholder="Enter your password"
           icon={<Lock className="h-4 w-4" />}
+          autoComplete="current-password"
           required
         />
         <div className="text-right">
-          <Link href="#" className={authLinkClassName}>
+          <Link href="/forgot-password" className={authLinkClassName}>
             Forgot password?
           </Link>
         </div>
@@ -81,7 +83,7 @@ export default function LoginForm() {
           loading={loading}
           className={authPrimaryButtonClassName}
         >
-          Log In
+          Log in
         </Button>
       </form>
       <p className="mt-6 border-t border-slate-100 pt-5 text-center text-sm text-slate-600">

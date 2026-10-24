@@ -25,16 +25,20 @@ export default function RegisterForm() {
     setError("");
     const f = new FormData(e.currentTarget);
     const password = String(f.get("password"));
-    if (password !== String(f.get("confirmPassword"))) return setError("Passwords do not match.");
+    if (password !== String(f.get("confirmPassword")))
+      return setError("Passwords do not match.");
 
     setLoading(true);
     try {
       const { needsEmailConfirm } = await signUp({
-        email: String(f.get("email")), password,
-        firstName: String(f.get("first")), lastName: String(f.get("last")),
+        email: String(f.get("email")),
+        password,
+        firstName: String(f.get("first")),
+        lastName: String(f.get("last")),
       });
-      if (needsEmailConfirm) setDone(true);   // Supabase: chờ xác nhận email
-      else router.replace("/student");        // mock: vào thẳng dashboard
+      if (needsEmailConfirm)
+        setDone(true); // Supabase: chờ xác nhận email
+      else router.replace("/student"); // mock: vào thẳng dashboard
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
     } finally {
@@ -55,7 +59,7 @@ export default function RegisterForm() {
           href="/login"
           className={`mt-6 inline-block text-sm ${authLinkClassName}`}
         >
-          Back to Sign in
+          Back to log in
         </Link>
       </div>
     );
@@ -68,21 +72,34 @@ export default function RegisterForm() {
       </h1>
 
       <p className="mb-6 text-sm text-slate-600">
-        Create your free learner account in under a minute.
+        Create your free learner account and start practicing in under a minute.
       </p>
 
       <form onSubmit={handleSubmit} className={authFormClassName}>
         <div className="grid grid-cols-2 gap-3">
-          <Input name="first" label="First Name" placeholder="An" required />
-          <Input name="last" label="Last Name" placeholder="Nguyen" required />
+          <Input
+            name="first"
+            label="First name"
+            placeholder="An"
+            autoComplete="given-name"
+            required
+          />
+          <Input
+            name="last"
+            label="Last name"
+            placeholder="Nguyen"
+            autoComplete="family-name"
+            required
+          />
         </div>
 
         <Input
           name="email"
           type="email"
           icon={<Mail className="h-4 w-4" />}
-          label="Email Address"
+          label="Email address"
           placeholder="you@example.com"
+          autoComplete="email"
           required
         />
 
@@ -91,6 +108,7 @@ export default function RegisterForm() {
           type="password"
           label="Password"
           placeholder="At least 8 characters"
+          autoComplete="new-password"
           minLength={8}
           required
         />
@@ -99,8 +117,9 @@ export default function RegisterForm() {
           name="confirmPassword"
           type="password"
           icon={<Lock className="h-4 w-4" />}
-          label="Confirm Password"
+          label="Confirm password"
           placeholder="Re-enter your password"
+          autoComplete="new-password"
           minLength={8}
           required
         />
@@ -126,7 +145,7 @@ export default function RegisterForm() {
       <p className="mt-6 border-t border-slate-100 pt-5 text-center text-sm leading-5 text-slate-600">
         Already have an account?{" "}
         <Link href="/login" className={authLinkClassName}>
-          Sign in
+          Log in
         </Link>
       </p>
     </>

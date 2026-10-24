@@ -1,4 +1,4 @@
-import { Headphones, BookOpen, PenLine, Mic, CalendarDays, BarChart3, Clock, User, Settings } from "lucide-react";
+import { Headphones, BookOpen, PenLine, Mic, CalendarDays, BarChart3, Clock, User, Settings, NotebookPen } from "lucide-react";
 
 export const MAIN_NAV = [
   { href: "/student", label: "Home" },
@@ -16,6 +16,7 @@ export const PRACTICE_NAV = [
 export const DICTIONARY_NAV = { href: "/student/dictionary", label: "Dictionary" };
 
 export const AVATAR_NAV = [
+  { href: "/student/notes", label: "Notes", icon: NotebookPen },
   { href: "/student/plan", label: "Study Plan", icon: CalendarDays },
   { href: "/student/progress", label: "Learning Progress", icon: BarChart3 },
   { href: "/student/history", label: "History", icon: Clock },
