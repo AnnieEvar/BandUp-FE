@@ -3,6 +3,56 @@
 @theme inline {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui;
 }
+@theme {
+  --color-blue-50: #f0faf8;
+  --color-blue-100: #e6f7f3;
+  --color-blue-200: #d1efe9;
+  --color-blue-300: #a9e0d3;
+  --color-blue-400: #7dd1bf;
+  --color-blue-500: #54c5ac;
+  --color-blue-600: #1f8571;
+  --color-blue-700: #1b7664;
+  --color-blue-800: #165f51;
+  --color-blue-900: #134a40;
+  --color-blue-950: #0b2e28;
+
+  --color-purple-50: #f1fafc;
+  --color-purple-100: #e4f4f8;
+  --color-purple-200: #c6e8f0;
+  --color-purple-300: #9ad7e4;
+  --color-purple-400: #6cc5d8;
+  --color-purple-500: #3bb2ca;
+  --color-purple-600: #2a97ae;
+  --color-purple-700: #1a6f83;
+  --color-purple-800: #155a6a;
+  --color-purple-900: #114a57;
+  --color-purple-950: #0b323b;
+
+  --color-emerald-50: #f0fdf4;
+  --color-emerald-100: #dcfce7;
+  --color-emerald-200: #bbf7d0;
+  --color-emerald-300: #86efac;
+  --color-emerald-400: #4ade80;
+  --color-emerald-500: #22c55e;
+  --color-emerald-600: #16a34a;
+  --color-emerald-700: #15803d;
+  --color-emerald-800: #166534;
+  --color-emerald-900: #14532d;
+
+  --color-slate-50: #f6f8f9;
+  --color-slate-100: #eef2f4;
+  --color-slate-200: #e4e9ed;
+  --color-slate-300: #cbd3da;
+  --color-slate-400: #8794a1;
+  --color-slate-500: #5f6e7b;
+  --color-slate-600: #4b5966;
+  --color-slate-700: #36434f;
+  --color-slate-800: #28333c;
+  --color-slate-900: #1c252c;
+
+  --color-brand: #54c5ac;
+  --color-secondary: #3bb2ca;
+}
 
 /* Tiêu đề slate-900, nội dung slate-700, chú thích slate-600 */
 body {

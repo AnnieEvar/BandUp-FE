@@ -8,9 +8,11 @@ import type { Role } from "@/lib/auth/roles";
 import {
   AUTH_EVENT,
   getMockSession,
+  mockRequestPasswordReset,
   mockSignIn,
   mockSignOut,
   mockSignUp,
+  mockUpdatePassword,
   type MockUser,
 } from "@/lib/mock/localAuth";
 
@@ -39,6 +41,8 @@ export interface AuthContextValue {
   signIn: (email: string, password: string) => Promise<AppUser>;
   signUp: (input: SignUpInput) => Promise<{ needsEmailConfirm: boolean }>;
   signOut: () => Promise<void>;
+  requestPasswordReset: (email: string) => Promise<void>;
+  updatePassword: (password: string) => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextValue | null>(null);
@@ -130,7 +134,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) throw new Error(error.message);
       return { needsEmailConfirm: true };
     },
-
+    requestPasswordReset: async (email) => {
+      if (!supabase) return mockRequestPasswordReset(email);
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        // Must be listed under Authentication > URL Configuration > Redirect URLs in Supabase
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      // One generic message: do not reveal whether the address belongs to an account
+      if (error) throw new Error("We couldn't send the reset link. Please try again in a moment.");
+    },
+    updatePassword: async (password) => {
+      if (!supabase) return mockUpdatePassword(password);
+      const { error } = await supabase.auth.updateUser({ password });
+      if (error) throw new Error(error.message);
+    },
     signOut: async () => {
       if (supabase) await supabase.auth.signOut();
       else mockSignOut();

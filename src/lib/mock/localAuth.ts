@@ -81,3 +81,30 @@ export function mockSignOut() {
   window.localStorage.removeItem(SESSION_KEY);
   notify();
 }
+
+// ---- Password reset (mock mode only; nothing is emailed) ----
+const RECOVERY_KEY = "bandup_mock_recovery";
+const RECOVERY_TTL_MS = 15 * 60 * 1000;
+// Typing this address on /forgot-password previews the failure state
+export const MOCK_RESET_FAIL_EMAIL = "error@bandup.test";
+
+export async function mockRequestPasswordReset(emailInput: string): Promise<void> {
+  const email = emailInput.trim().toLowerCase();
+  await new Promise((resolve) => setTimeout(resolve, 600)); // simulated latency
+  if (email === MOCK_RESET_FAIL_EMAIL) {
+    throw new Error("We couldn't send the reset link. Please try again in a moment.");
+  }
+  // Same result whether or not the account exists, so the UI cannot be used to probe accounts
+  write(RECOVERY_KEY, { email, expiresAt: Date.now() + RECOVERY_TTL_MS });
+}
+
+export async function mockUpdatePassword(password: string): Promise<void> {
+  const pending = read<{ email: string; expiresAt: number } | null>(RECOVERY_KEY, null);
+  if (!pending || pending.expiresAt < Date.now()) {
+    throw new Error("This reset link is invalid or has expired. Please request a new one.");
+  }
+  const passwordHash = await hash(password);
+  const list = await users();
+  write(USERS_KEY, list.map((u) => (u.email === pending.email ? { ...u, passwordHash } : u)));
+  window.localStorage.removeItem(RECOVERY_KEY);
+}

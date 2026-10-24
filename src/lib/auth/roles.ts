@@ -7,4 +7,4 @@ export const ROLE_HOME: Record<Role, string> = {
   admin: "/admin",
 };
 
-export const AUTH_PAGES = ["/login", "/register", "/teacher-application"];
+export const AUTH_PAGES = ["/login", "/register", "/forgot-password", "/teacher-application"];
